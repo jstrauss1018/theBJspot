@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fernleaf & Rye — Tasting Menu</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Source+Serif+4:ital,wght@0,400;1,400;0,600&family=Courier+Prime:wght@400;700&display=swap');
+
+:root{
+  --paper: #ECE4CE;
+  --paper-dark: #E1D7B8;
+  --ink: #2B2419;
+  --ink-soft: #4A4030;
+  --green: #33402C;
+  --brass: #A2792F;
+  --stamp-red: #7A2E22;
+  --rule: #C7BB94;
+}
+
+*{ box-sizing: border-box; }
+
+body{
+  margin: 0;
+  min-height: 100vh;
+  background: var(--green);
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.03), transparent 40%),
+    radial-gradient(circle at 80% 70%, rgba(255,255,255,0.03), transparent 45%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 18px;
+  font-family: 'Source Serif 4', serif;
+  color: var(--ink);
+}
+
+.menu{
+  width: 100%;
+  max-width: 560px;
+  background: var(--paper);
+  background-image: linear-gradient(180deg, var(--paper), var(--paper-dark) 130%);
+  padding: 52px 44px 40px;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.5) inset, 0 30px 60px rgba(0,0,0,0.35);
+  position: relative;
+}
+.menu::before{
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid var(--rule);
+  pointer-events: none;
+}
+
+.crest{
+  text-align: center;
+  font-family: 'Fraunces', serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--brass);
+  margin-bottom: 6px;
+}
+h1{
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-style: italic;
+  text-align: center;
+  font-size: clamp(34px, 6vw, 46px);
+  margin: 0 0 4px;
+  line-height: 1.05;
+}
+.tagline{
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink-soft);
+  font-style: italic;
+  margin: 0 0 26px;
+}
+.divider{ display: flex; align-items: center; gap: 10px; margin: 0 0 28px; }
+.divider span{ font-size: 11px; letter-spacing: 0.14em; color: var(--brass); white-space: nowrap; }
+.divider .line{ flex: 1; height: 1px; background: var(--rule); }
+
+.plate{ min-height: 128px; display: flex; flex-direction: column; justify-content: center; }
+.placeholder{ font-style: italic; color: var(--ink-soft); font-size: 15px; text-align: center; padding: 20px 0; }
+
+.dish{ opacity: 0; transform: translateY(6px); }
+.dish.show{ animation: reveal 0.5s ease forwards; }
+@keyframes reveal{ to{ opacity: 1; transform: translateY(0); } }
+
+.dish-line{ display: flex; align-items: baseline; gap: 8px; }
+.dish-name{ font-family: 'Fraunces', serif; font-weight: 600; font-size: 19px; }
+.leader{ flex: 1; border-bottom: 1px dotted var(--brass); transform: translateY(-4px); }
+.price{ font-family: 'Courier Prime', monospace; font-size: 16px; color: var(--stamp-red); white-space: nowrap; }
+.description{ font-style: italic; font-size: 14.5px; color: var(--ink-soft); margin-top: 6px; line-height: 1.5; }
+
+.dish-actions{
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.link-btn{
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  font-style: italic;
+  color: var(--green);
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--brass);
+  padding: 2px 1px;
+  cursor: pointer;
+}
+.link-btn:hover{ color: var(--stamp-red); }
+
+.controls{ display: flex; justify-content: center; margin: 34px 0 6px; }
+button.main-btn{
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  background: var(--green);
+  color: var(--paper);
+  border: 1px solid var(--green);
+  padding: 13px 28px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+button.main-btn:hover{ background: #3f4f36; }
+button.main-btn:active{ transform: scale(0.97); }
+
+.credit{ text-align: center; font-size: 12px; color: var(--ink-soft); font-style: italic; margin-top: 30px; opacity: 0.75; }
+
+.toast{
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: 'Source Serif 4', serif;
+  font-size: 13px;
+  font-style: italic;
+  padding: 10px 18px;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+  z-index: 20;
+}
+.toast.show{ opacity: 1; transform: translateX(-50%) translateY(0); }
+
+.overlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(20,17,10,0.55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 30;
+}
+.overlay.show{ display: flex; }
+
+.recipe-card{
+  width: 100%;
+  max-width: 480px;
+  max-height: 82vh;
+  overflow-y: auto;
+  background: var(--paper);
+  padding: 32px 30px 28px;
+  position: relative;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+}
+.recipe-close{
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-family: 'Source Serif 4', serif;
+  font-size: 20px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  line-height: 1;
+}
+.recipe-eyebrow{ font-size: 11px; letter-spacing: 0.14em; color: var(--brass); margin-bottom: 8px; }
+.recipe-title{ font-family: 'Fraunces', serif; font-weight: 600; font-size: 22px; margin: 0 0 4px; }
+.recipe-servings{ font-size: 13px; font-style: italic; color: var(--ink-soft); margin-bottom: 18px; }
+.recipe-section h3{
+  font-family: 'Fraunces', serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin: 18px 0 8px;
+  color: var(--green);
+}
+.recipe-section ul, .recipe-section ol{ margin: 0; padding-left: 20px; font-size: 14px; line-height: 1.6; }
+.recipe-section li{ margin-bottom: 6px; }
+.chef-note{
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px dotted var(--rule);
+  font-style: italic;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.recipe-loading{
+  text-align: center;
+  padding: 30px 10px;
+  font-style: italic;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.recipe-error{
+  text-align: center;
+  padding: 20px 10px;
+  font-style: italic;
+  color: var(--stamp-red);
+  font-size: 14px;
+}
+
+@media (max-width: 480px){
+  .menu{ padding: 40px 24px 32px; }
+  .dish-line{ flex-wrap: wrap; }
+  .leader{ order: 3; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<main class="menu">
+  <div class="crest">est. 2012 &middot; Fort Greene, Brooklyn</div>
+  <h1>The BJ Spot</h1>
+  <p class="tagline">The perfect Brooklyn tasking menu, thought up by Britt &amp; Jacob</p>
+
+  <div class="divider"><span>TONIGHT'S COURSE</span><span class="line"></span></div>
+
+  <div class="plate" id="plate">
+    <p class="placeholder" id="placeholder">Ring the bell for the kitchen's next idea.</p>
+  </div>
+
+  <div class="controls">
+    <button class="main-btn" onclick="generateDish()">See the Next Menu Item</button>
+  </div>
+
+  <p class="credit">Dreamed up by Britt &amp; Jacob in 2012 but sat dormant for many, many years as we waited for AI to take over the world</p>
+</main>
+
+<div class="overlay" id="overlay">
+  <div class="recipe-card">
+    <button class="recipe-close" onclick="closeRecipe()">&times;</button>
+    <div id="recipeContent"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const data = {
+  nationality: ["Brazilian","Arctic","Russian","Maine","Romanian","Turkish style","Argentinian","Malagasy style","Alaskan","Filipino","Japanese","Chinese","Norwegian style","Ethiopian style","South African","French","Spanish","Greek","Dubai-style","Floridian","Californian","Pacific","Local","Wild","Impossible","Native","Rhode Island","Dakotan","English","Scottish","Canadian","Midwestern","Croatian"],
+  adjective: ["encrusted","heirloom","locally sourced","baby","farm raised","organic","small batch","imported","spring","deconstructed","artisan","homemade","crispy","moist","drenched","lightly dressed","smoked","heavily dressed","dusted","cured","whipped","General Tso's","frothy","frothed","smashed","pan seared","dry rubbed","brined","hand-cut","massaged","au gratin","rolled","sous vide","fried","roasted","shaved","puréed","crumbled","toad-in-the-hole","diced","chiffonaded","brunoise","folded","grilled","micro","striped","fall-off-the-bone","melted","spicy","hot","creamed","creamy","cold","condensed","open-faced","zested","toasted","naturally raised","preserved","serrano","seasonal","velvety","emulsified","chilled","slow roasted","pickled","compote of","whole","kobe","asada","wild","spit-roasted","street"],
+  meat: ["pork","lamb","fugu fish","fluke","snapper","rabbit","frog","veal","beef","halibut","yellowtail","steak","blue crab","dungeness crab","lobster","blue lobster","king crab","ox","duck","goose","swan","ostrich","squab","poussin","capon","oyster","chicken","crawfish","snake","octopus","black cod","rockfish","shark","axolotl","cuttlefish","mahi mahi","dolphin","seitan","marsupial"],
+  bodyPart: ["leg","shank","belly","shoulder","cheek","toe","brain","lung","liver","tail","thigh","breast","flank","rib","foot","claw","forehead","neck","tendon","tenderloin","knee joint","head","toes","cartilage","osso bucco","jowl","rump","throat","fillet","freckle","hair follicles","gland"],
+  preposition: ["on a bed of","on a bunkbed of","alongside","topped with","paired with","wrapped in","layered on","stuffed with","nestled on","on a pillow of","engorged with","swollen on","choked with","asphyxiated by","with a hint of","near a waft of","drowning in distilled","wading in shallow pools of","germinated by","pollinated with","impregnated by","with a mere suggestion of","under a drizzle of","cloaked in","bathed in the essence of","kissed by","smothered in","delicately brushed with","submerged in","whispering notes of","suffused with","saturated by","tenderly infused with","enveloped in","steeped in","imbued with","glazed in","exuding the aroma of","encrusted with","laced with","tinged with","marinated in the whispers of","coaxed into","wrapped in the embrace of","shrouded by","buried under layers of","trickling through","swaddled in","buoyed by the scent of","misted with","glistening in","entwined with","wafting through","perfumed by","bound together with","suspended in the air of","smeared with","clinging to","hovering in the presence of","con"],
+  sideDish: ["panzanella","sweetbreads","head cheese","an organic omelet","fricasse","ratatouille","baba ganoush","polenta","chili","tacos","granita","parmesan-herb crackers","mache","ricotta salata","fennel slaw","braised endives","creamed spinach","succotash","kimchi","cornbread","wild rice pilaf","confit potatoes","tzatziki","spaetzle","roasted beets","collard greens","celeriac puree","haricots verts","farro salad","pickled daikon","charred broccolini","fried green tomatoes","sauteed mushrooms","carrot-ginger mash","black-eyed peas","chimichurri roasted carrots","grilled asparagus","buttered turnips","pomme puree","paneer tikka","chapati","soba noodle salad","stuffed grape leaves","fava bean hummus","crispy Brussels sprouts","pickled red onions","jicama slaw","seaweed salad","yuca fries","spicy cucumber salad","smoked eggplant","cabbage pancakes"],
+  fruitVeg: ["nettle","onion","broccolini","beet","carrot","tomatillo","garlic","fennel","orange","cauliflower","kale","dandelion","seitan","turnip","trumpet mushroom","shiitake mushroom","oyster mushroom","hominy","falafel","jicama","watermelon","radish","watermelon radish","spinach","arugula","leaf","lemon","tofu","soybean","edamame","achiote","acai","fiddlehead fern","ramp","poppyseed","cornichon","potato","shiso","yuzu","endive","glazed turnips","basil","yellow romano beans","haricots","pea shoots","pink pineapple","coconut"],
+  ingredient: ["chili threads","wasabi","saffron","African bird pepper","Hungarian paprika","harissa","meringue","cinnamon stick","vanilla bean","queso blanco","cilantro","vinegar","whiskey","jasmine","rind","green tea","parsley sauce","sweet pepper relish","crispy potato","flowering coriander"],
+  sauce: ["anglaise","au poivre","au jus","cream","vinaigrette","foam","reduction","aioli","ganache","bernaise","demi glace","gremolata","beurre blanc","hoisin","salsa","mirepoix","chimichurri","ragu","glaze","ponzu","creme fraiche"]
+};
+
+let currentDish = null;
+
+function pick(category){
+  const words = data[category];
+  return words[Math.floor(Math.random() * words.length)];
+}
+
+function titleCase(str){
+  return str.replace(/\w\S*/g, w => w.charAt(0).toUpperCase() + w.slice(1));
+}
+function lowerFirst(str){
+  return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
+function generateDish(){
+  const dishName = titleCase(`${pick('nationality')} ${pick('adjective')} ${pick('meat')} ${pick('bodyPart')}`);
+  const description = lowerFirst(
+    `${pick('preposition')} ${pick('sideDish')}, ${pick('fruitVeg')}, and ${pick('ingredient')} ${pick('sauce')}.`
+  );
+  const isMarketPrice = Math.random() < 0.12;
+  const price = isMarketPrice ? 'MP' : `$${Math.floor(Math.random() * (68 - 22) + 22)}`;
+
+  currentDish = { name: dishName, description, price };
+
+  const plate = document.getElementById('plate');
+  playDing();
+
+  plate.innerHTML = `
+    <div class="dish" id="dishBlock">
+      <div class="dish-line">
+        <span class="dish-name">${dishName}</span>
+        <span class="leader"></span>
+        <span class="price">${price}</span>
+      </div>
+      <p class="description">${description}</p>
+      <div class="dish-actions">
+        <button class="link-btn" onclick="shareDish()">Share This Course</button>
+        <button class="link-btn" onclick="makeAtHome()">Make This At Home</button>
+      </div>
+    </div>
+  `;
+
+  requestAnimationFrame(() => {
+    document.getElementById('dishBlock').classList.add('show');
+  });
+}
+
+/* ---------- sound: a real service-bell "ding", not a cowbell ---------- */
+let audioCtx;
+function playDing(){
+  audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+
+  const now = audioCtx.currentTime;
+  const fundamental = 2100;
+  // inharmonic partials, like a struck metal bell dome
+  const partials = [
+    { ratio: 1,    gain: 0.5,  decay: 0.55 },
+    { ratio: 2.4,  gain: 0.28, decay: 0.35 },
+    { ratio: 3.9,  gain: 0.14, decay: 0.22 },
+    { ratio: 5.4,  gain: 0.07, decay: 0.15 }
+  ];
+
+  partials.forEach(p => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = fundamental * p.ratio;
+    gain.gain.setValueAtTime(0, now);
+    gain.gain.linearRampToValueAtTime(p.gain, now + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + p.decay);
+    osc.connect(gain).connect(audioCtx.destination);
+    osc.start(now);
+    osc.stop(now + p.decay + 0.05);
+  });
+
+  // tiny high "tick" transient for the strike
+  const clickOsc = audioCtx.createOscillator();
+  const clickGain = audioCtx.createGain();
+  clickOsc.type = 'square';
+  clickOsc.frequency.value = 5200;
+  clickGain.gain.setValueAtTime(0.06, now);
+  clickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.02);
+  clickOsc.connect(clickGain).connect(audioCtx.destination);
+  clickOsc.start(now);
+  clickOsc.stop(now + 0.03);
+}
+
+/* ---------- share ---------- */
+function showToast(msg){
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => toast.classList.remove('show'), 2400);
+}
+
+async function shareDish(){
+  if (!currentDish) return;
+  const text = `Tonight's course at Fernleaf & Rye: ${currentDish.name} — ${currentDish.description} (${currentDish.price})`;
+  const shareData = { title: 'Fernleaf & Rye', text, url: location.href };
+
+  if (navigator.share) {
+    try {
+      await navigator.share(shareData);
+    } catch (err) {
+      // user cancelled share sheet — no action needed
+    }
+  } else {
+    try {
+      await navigator.clipboard.writeText(`${text}\n${location.href}`);
+      showToast('Copied to clipboard!');
+    } catch (err) {
+      showToast('Could not copy — try again.');
+    }
+  }
+}
+
+/* ---------- AI recipe ---------- */
+function openRecipeOverlay(){
+  document.getElementById('overlay').classList.add('show');
+}
+function closeRecipe(){
+  document.getElementById('overlay').classList.remove('show');
+}
+
+async function makeAtHome(){
+  if (!currentDish) return;
+  const content = document.getElementById('recipeContent');
+  content.innerHTML = `<div class="recipe-loading">The chef is scribbling this one down...</div>`;
+  openRecipeOverlay();
+
+  const prompt = `This is for a joke restaurant-menu generator app. It randomly mashes together silly food words (nationality + odd adjective + animal + body part + weird preposition + side + veg + sauce) to produce absurd, obviously-fictional tasting-menu items as wordplay humor — nothing here refers to anything real.
+
+Here is the randomly generated item:
+Dish: "${currentDish.name}"
+Description: "${currentDish.description}"
+
+Write this up as a straight, professional recipe — the kind you'd find in an actual cookbook. Plain, competent, matter-of-fact instructions and quantities. Do not add jokes, winking asides, exaggeration, or comedic commentary of any kind — the humor should come entirely from the dish name itself being absurd, not from how you write about it. Treat every ingredient exactly as seriously as a real chef would.
+
+The one exception: if an ingredient would be genuinely hard for a home cook to source (an exotic animal part, an unusual cut, etc.), you may add a brief, practical substitution note in the plain style of a real cookbook, e.g. "or substitute chicken thigh if swan neck is unavailable."
+
+Respond ONLY with valid JSON, nothing before or after it, no markdown fences, in exactly this shape:
+{
+  "servings": "a short plain phrase, e.g. 'Serves 4'",
+  "ingredients": ["5 to 8 ingredient lines with realistic quantities, substitution notes only where genuinely useful"],
+  "steps": ["4 to 6 steps, written plainly and precisely like a real recipe. Do not include step numbers or bullets in the text itself — just the instruction, since the app numbers them automatically"]
+}`;
+
+  try {
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    const textBlocks = (data.content || []).filter(b => b.type === 'text').map(b => b.text);
+    const fullText = textBlocks.join('\n').trim();
+    if (!fullText) throw new Error('No text in response');
+
+    const recipe = parseRecipeJSON(fullText);
+    if (!recipe || !recipe.ingredients || !recipe.steps) {
+      throw new Error('Could not find recipe JSON in response');
+    }
+
+    content.innerHTML = `
+      <div class="recipe-eyebrow">CHEF'S INSTRUCTIONS</div>
+      <h2 class="recipe-title">${currentDish.name}</h2>
+      <div class="recipe-servings">${recipe.servings || ''}</div>
+      <div class="recipe-section">
+        <h3>You Will Need</h3>
+        <ul>${recipe.ingredients.map(i => `<li>${i}</li>`).join('')}</ul>
+      </div>
+      <div class="recipe-section">
+        <h3>Method</h3>
+        <ol>${recipe.steps.map(s => `<li>${stripLeadingNumber(s)}</li>`).join('')}</ol>
+      </div>
+    `;
+  } catch (err) {
+    console.error('Recipe generation failed:', err);
+    content.innerHTML = `
+      <div class="recipe-error">The kitchen is too busy to write this one down. Try again in a moment.</div>
+      <div class="recipe-error" style="font-size:11px; opacity:0.7; margin-top:6px;">${(err && err.message) ? err.message : ''}</div>
+    `;
+  }
+}
+
+// Removes a leading "1. " / "1)" / "1 -" etc, in case the model numbers
+// its own steps despite instructions — the <ol> already numbers them.
+function stripLeadingNumber(str){
+  return str.replace(/^\s*\d+[.)\-:]\s*/, '');
+}
+
+// Strips markdown fences and pulls out the first {...} block, in case the
+// model adds any stray preamble or wraps the JSON in prose.
+function parseRecipeJSON(text){
+  const cleaned = text.replace(/```json|```/gi, '').trim();
+  try {
+    return JSON.parse(cleaned);
+  } catch (e) {
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start !== -1 && end !== -1 && end > start) {
+      try {
+        return JSON.parse(cleaned.slice(start, end + 1));
+      } catch (e2) {
+        return null;
+      }
+    }
+    return null;
+  }
+}
+</script>
+</body>
+</html>
